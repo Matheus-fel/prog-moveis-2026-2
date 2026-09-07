@@ -67,7 +67,10 @@ class TelaResumo extends StatelessWidget {
           // TAREFA 4 — Alinha os filhos à esquerda (início da horizontal)
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // TAREFA 3 — Envolva o bloco do nome + cidade em um Container próprio (verde claro)
+            // -------------------------------------------------------------
+            // CICLO 1 — O ALFABETO DO LAYOUT
+            // -------------------------------------------------------------
+            // TAREFA 3 — Container verde claro abraçando nome e cidade
             Container(
               padding: const EdgeInsets.all(12),
               color: const Color(0xFFD5F5E3),
@@ -111,8 +114,74 @@ class TelaResumo extends StatelessWidget {
                 ),
               ],
             ),
+
+            const SizedBox(height: 24),
+
+            // -------------------------------------------------------------
+            // CICLO 2 — RESTRIÇÕES E O OVERFLOW AMARELO
+            // -------------------------------------------------------------
+            // TAREFA 1 (BUG 1) — Cards envolvidos em Expanded para dividir o espaço
+            Row(
+              children: const [
+                Expanded(
+                  child: _CardNumero(
+                    titulo: 'Talhões cadastrados no total',
+                    valor: '6',
+                  ),
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: _CardNumero(
+                    titulo: 'Atividades registradas no mês',
+                    valor: '14',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // TAREFA 2 (BUG 2) — Texto longo envolvido em Expanded para quebrar a linha
+            Row(
+              children: const [
+                Icon(Icons.info_outline, color: Color(0xFF1E5631)),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Última sincronização feita há três dias — verifique o sinal '
+                    'antes de sair para a lavoura para não perder registros.',
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// Widget auxiliar do Ciclo 2 para renderizar os cards de número
+class _CardNumero extends StatelessWidget {
+  final String titulo;
+  final String valor;
+  const _CardNumero({required this.titulo, required this.valor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFD5F5E3),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        children: [
+          Text(
+            valor,
+            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 4),
+          Text(titulo, textAlign: TextAlign.center),
+        ],
       ),
     );
   }
