@@ -57,17 +57,61 @@ class TelaResumo extends StatelessWidget {
       //
       // Os arquivos de cada ciclo estão na pasta ../exercicios do repositório
       // e também podem ser praticados no dartpad.dev (modo Flutter).
-      //
-      // Comece apagando o Center abaixo e montando o Ciclo 1 no lugar.
       // ===================================================================
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Text(
-            'Tela em branco.\nÉ aqui que a aula de hoje começa.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18, color: Colors.black54),
-          ),
+      // Container: uma caixa que dá cor, margem, borda e tamanho ao filho.
+      body: Container(
+        // Padding interno: afasta o conteúdo das bordas da caixa.
+        padding: const EdgeInsets.all(16),
+        // Column: empilha os filhos na vertical, de cima para baixo.
+        child: Column(
+          // TAREFA 4 — Alinha os filhos à esquerda (início da horizontal)
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // TAREFA 3 — Envolva o bloco do nome + cidade em um Container próprio (verde claro)
+            Container(
+              padding: const EdgeInsets.all(12),
+              color: const Color(0xFFD5F5E3),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  // TAREFA 1 — Nome da propriedade
+                  Text(
+                    'Estância Boa Esperança',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  // SizedBox: um espaço vazio de tamanho fixo. Aqui, respiro vertical.
+                  SizedBox(height: 4),
+                  // TAREFA 1 — Cidade da propriedade
+                  Text(
+                    'Rialma — GO',
+                    style: TextStyle(fontSize: 16, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Row: distribui os filhos na horizontal, lado a lado.
+            const Row(
+              children: [
+                Text('Área total: ', style: TextStyle(fontSize: 16)),
+                Text(
+                  '96,4 ha',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            // TAREFA 2 — Acrescente, abaixo da área total, mais uma Row informando o responsável
+            const Row(
+              children: [
+                Text('Responsável: ', style: TextStyle(fontSize: 16)),
+                Text(
+                  'Matheus Pereira',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
