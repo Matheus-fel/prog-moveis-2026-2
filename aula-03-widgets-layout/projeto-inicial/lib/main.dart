@@ -1,18 +1,37 @@
-// Caderno de Campo do Vale — PROJETO INICIAL
+// CICLO 3 — LISTAS
+// ListView e ListView.builder — a lista de talhões do Caderno de Campo
 // Programação para Dispositivos Móveis · IF Goiano — Campus Ceres
 //
-// Este é o ponto de partida da aula de widgets de layout. O app já roda,
-// mas a tela está praticamente vazia de propósito: você vai construí-la
-// ao longo dos quatro ciclos, com o hot reload mostrando cada mudança.
+// A IDEIA
+// Você já tem a classe Talhao dos exercícios de Dart. Agora vamos
+// transformar uma LISTA de talhões em uma LISTA NA TELA, rolável.
 //
-// COMO RODAR (uma vez, no terminal, dentro desta pasta):
-//   flutter create .        # gera as pastas nativas (android/, ios/...)
-//   flutter pub get         # baixa as dependências
-//   flutter run             # roda no dispositivo/emulador selecionado
-//
-// Depois, deixe o app rodando: salvar o arquivo aplica o hot reload.
+// ListView          -> quando há poucos itens fixos, escritos à mão.
+// ListView.builder  -> quando os itens vêm de uma coleção. Constrói cada
+//                      item sob demanda (só o que está visível). É o que
+//                      se usa de verdade.
 
 import 'package:flutter/material.dart';
+
+// A mesma classe Talhao dos exercícios de Dart.
+class Talhao {
+  final String nome;
+  final double areaHa;
+  final String cultura;
+  const Talhao({required this.nome, required this.areaHa, required this.cultura});
+}
+
+// Os dados da propriedade — TAREFA 1: Dois talhões adicionados à lista
+const List<Talhao> talhoes = [
+  Talhao(nome: 'Talhão 1', areaHa: 38.0, cultura: 'soja'),
+  Talhao(nome: 'Talhão 2', areaHa: 24.5, cultura: 'milho'),
+  Talhao(nome: 'Talhão 3', areaHa: 42.0, cultura: 'milho'),
+  Talhao(nome: 'Talhão 4', areaHa: 31.2, cultura: 'soja'),
+  Talhao(nome: 'Talhão 5', areaHa: 12.8, cultura: 'sorgo'),
+  Talhao(nome: 'Talhão 6', areaHa: 19.4, cultura: 'milho'),
+  Talhao(nome: 'Talhão 7', areaHa: 50.0, cultura: 'feijão'),
+  Talhao(nome: 'Talhão 8', areaHa: 15.5, cultura: 'soja'),
+];
 
 void main() => runApp(const CadernoApp());
 
@@ -28,160 +47,62 @@ class CadernoApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1E5631)),
         useMaterial3: true,
       ),
-      home: const TelaResumo(),
+      home: const TelaTalhoes(),
     );
   }
 }
 
-class TelaResumo extends StatelessWidget {
-  const TelaResumo({super.key});
+class TelaTalhoes extends StatelessWidget {
+  const TelaTalhoes({super.key});
+
+  // TAREFA 3 — Seleção de ícone conforme a cultura
+  IconData _obterIconeCultura(String cultura) {
+    switch (cultura.toLowerCase()) {
+      case 'milho':
+        return Icons.grain;
+      case 'soja':
+        return Icons.eco;
+      default:
+        return Icons.grass;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Caderno de Campo do Vale'),
+        title: const Text('Talhões'),
         backgroundColor: const Color(0xFF1E5631),
         foregroundColor: Colors.white,
       ),
-      // ===================================================================
-      // AQUI COMEÇA A AULA.
-      //
-      // Ao longo dos quatro ciclos, você vai substituir este corpo pela
-      // tela de resumo da propriedade:
-      //
-      //   Ciclo 1 — o cabeçalho (nome da propriedade + área total)
-      //   Ciclo 2 — a faixa com três números, sem overflow (Expanded)
-      //   Ciclo 3 — a lista de talhões (ListView.builder)
-      //   Ciclo 4 — tudo junto, na ordem certa
-      //
-      // Os arquivos de cada ciclo estão na pasta ../exercicios do repositório
-      // e também podem ser praticados no dartpad.dev (modo Flutter).
-      // ===================================================================
-      // Container: uma caixa que dá cor, margem, borda e tamanho ao filho.
-      body: Container(
-        // Padding interno: afasta o conteúdo das bordas da caixa.
-        padding: const EdgeInsets.all(16),
-        // Column: empilha os filhos na vertical, de cima para baixo.
-        child: Column(
-          // TAREFA 4 — Alinha os filhos à esquerda (início da horizontal)
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // -------------------------------------------------------------
-            // CICLO 1 — O ALFABETO DO LAYOUT
-            // -------------------------------------------------------------
-            // TAREFA 3 — Container verde claro abraçando nome e cidade
-            Container(
-              padding: const EdgeInsets.all(12),
-              color: const Color(0xFFD5F5E3),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  // TAREFA 1 — Nome da propriedade
-                  Text(
-                    'Estância Boa Esperança',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                  // SizedBox: um espaço vazio de tamanho fixo. Aqui, respiro vertical.
-                  SizedBox(height: 4),
-                  // TAREFA 1 — Cidade da propriedade
-                  Text(
-                    'Rialma — GO',
-                    style: TextStyle(fontSize: 16, color: Colors.black54),
-                  ),
-                ],
+      // ListView.builder percorre a lista e cria um item para cada talhão.
+      body: ListView.builder(
+        itemCount: talhoes.length,
+        itemBuilder: (context, indice) {
+          final talhao = talhoes[indice];
+
+          // TAREFA 2 — Formatação da área no padrão PT-BR (vírgula)
+          final areaFormatada = talhao.areaHa
+              .toStringAsFixed(1)
+              .replaceAll('.', ',');
+
+          // TAREFA 4 — ListTile envolvido em Card para dar destaque visual
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            child: ListTile(
+              leading: Icon(
+                _obterIconeCultura(talhao.cultura),
+                color: const Color(0xFF1E5631),
               ),
+              title: Text(
+                talhao.nome,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text('$areaFormatada ha — ${talhao.cultura}'),
+              trailing: const Icon(Icons.chevron_right),
             ),
-            const SizedBox(height: 16),
-            // Row: distribui os filhos na horizontal, lado a lado.
-            const Row(
-              children: [
-                Text('Área total: ', style: TextStyle(fontSize: 16)),
-                Text(
-                  '96,4 ha',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            // TAREFA 2 — Acrescente, abaixo da área total, mais uma Row informando o responsável
-            const Row(
-              children: [
-                Text('Responsável: ', style: TextStyle(fontSize: 16)),
-                Text(
-                  'Matheus Pereira',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // -------------------------------------------------------------
-            // CICLO 2 — RESTRIÇÕES E O OVERFLOW AMARELO
-            // -------------------------------------------------------------
-            // TAREFA 1 (BUG 1) — Cards envolvidos em Expanded para dividir o espaço
-            Row(
-              children: const [
-                Expanded(
-                  child: _CardNumero(
-                    titulo: 'Talhões cadastrados no total',
-                    valor: '6',
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: _CardNumero(
-                    titulo: 'Atividades registradas no mês',
-                    valor: '14',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // TAREFA 2 (BUG 2) — Texto longo envolvido em Expanded para quebrar a linha
-            Row(
-              children: const [
-                Icon(Icons.info_outline, color: Color(0xFF1E5631)),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Última sincronização feita há três dias — verifique o sinal '
-                    'antes de sair para a lavoura para não perder registros.',
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Widget auxiliar do Ciclo 2 para renderizar os cards de número
-class _CardNumero extends StatelessWidget {
-  final String titulo;
-  final String valor;
-  const _CardNumero({required this.titulo, required this.valor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFD5F5E3),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          Text(
-            valor,
-            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          Text(titulo, textAlign: TextAlign.center),
-        ],
+          );
+        },
       ),
     );
   }
